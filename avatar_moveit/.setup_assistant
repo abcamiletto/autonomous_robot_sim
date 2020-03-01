@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: avatar_description
+    relative_path: robot/main/main2.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/avatar.srdf
+  CONFIG:
+    author_name: Andrea Boscolo Camiletto
+    author_email: abcamiletto@gmail.com
+    generated_timestamp: 1581799027

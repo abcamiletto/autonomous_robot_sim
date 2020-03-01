@@ -1,0 +1,2 @@
+Per ora visual e collision coincidono, quello con l'origine sbagliata è migliore ma va sistemato.
+Quando avremo il CAD della base, sarà meglio esportarlo in DAE perchè permette di avere colori diversi e di semplificare il collision con Blender

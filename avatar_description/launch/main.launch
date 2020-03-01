@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- params i want to pass to the following launch files, down here you can find some examples -->
+    <!--arg name="diameter_m" default="0.055" /-->
+    <!--arg name="lenght_m" default="0.3" /-->
+
+    <include file="$(find avatar_description)/launch/spawn_avatar.launch">
+        <!--arg name="diameter_m" value="$(arg diameter_m)" /-->
+        <!--arg name="lenght_m" value="$(arg lenght_m)" /-->
+    </include>
+
+
+</launch>
