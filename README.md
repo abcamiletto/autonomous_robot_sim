@@ -32,7 +32,7 @@ So now you should have:
 
 To start the task you have to open a new terminal and type
 `
-rosrun avatar_moveit avc_master.py X Y Z
+rosrun avatar_moveit pick_n_place.py X Y Z
 `
 Where X,Y,Z are the coordinates of the point in the space you want to reach.
 You should get something like:
@@ -51,7 +51,7 @@ roslaunch avatar_moveit avatar_moveit.launch
 
 Now just launch the script 2
 `
-rosrun avatar_moveit avc_master2.py
+rosrun avatar_moveit cylinder_v1.py
 `
 And you should get:
 ![Gif2](https://github.com/abcamiletto/mecrob_project/blob/master/images/ezgif.com-video-to-gif%20(1).gif?raw=true)
