@@ -159,6 +159,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 
 
   def go_to_pose_goal(self):
+    global pitch
     # Copy class variables to local variables to make the web tutorials more clear.
     # In practice, you should use the class variables directly unless you have a good
     # reason not to.
@@ -171,18 +172,24 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## We can plan a motion for this group to a desired pose for the
     ## end-effector:
     pose_goal = geometry_msgs.msg.Pose()
+
+    if abs(diff_direction) < 10 :
+        pose_goal.position.y = -Y
+        pitch =  3*pi/2
+    elif abs(diff_direction) > 170 and abs(diff_direction) < 190 :
+        pose_goal.position.y = Y
+    else :
+        rospy.loginfo("TARGET TOO CLOSE")
+        pose_goal.position.y = - Y
+        pitch =  3*pi/2
+
     quaternion = quaternion_from_euler(roll, pitch, yaw)
     pose_goal.orientation.x = quaternion[0]
     pose_goal.orientation.y = quaternion[1]
     pose_goal.orientation.z = quaternion[2]
     pose_goal.orientation.w = quaternion[3]
     pose_goal.position.x = X
-    if abs(diff_direction) < 10 :
-        pose_goal.position.y = -Y
-    elif abs(diff_direction) > 170 and abs(diff_direction) < 190 :
-        pose_goal.position.y = Y
-    else :
-        rospy.loginfo("Something went wrong")
+
     pose_goal.position.z = Z
 
     move_group.set_pose_target(pose_goal)
@@ -294,47 +301,6 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## END_SUB_TUTORIAL
 
 
-  def wait_for_state_update(self, box_is_known=False, box_is_attached=False, timeout=4):
-    # Copy class variables to local variables to make the web tutorials more clear.
-    # In practice, you should use the class variables directly unless you have a good
-    # reason not to.
-    box_name = self.box_name
-    scene = self.scene
-
-    ## BEGIN_SUB_TUTORIAL wait_for_scene_update
-    ##
-    ## Ensuring Collision Updates Are Receieved
-    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ## If the Python node dies before publishing a collision object update message, the message
-    ## could get lost and the box will not appear. To ensure that the updates are
-    ## made, we wait until we see the changes reflected in the
-    ## ``get_attached_objects()`` and ``get_known_object_names()`` lists.
-    ## For the purpose of this tutorial, we call this function after adding,
-    ## removing, attaching or detaching an object in the planning scene. We then wait
-    ## until the updates have been made or ``timeout`` seconds have passed
-    start = rospy.get_time()
-    seconds = rospy.get_time()
-    while (seconds - start < timeout) and not rospy.is_shutdown():
-      # Test if the box is in attached objects
-      attached_objects = scene.get_attached_objects([box_name])
-      is_attached = len(attached_objects.keys()) > 0
-
-      # Test if the box is in the scene.
-      # Note that attaching the box will remove it from known_objects
-      is_known = box_name in scene.get_known_object_names()
-
-      # Test if we are in the expected state
-      if (box_is_attached == is_attached) and (box_is_known == is_known):
-        return True
-
-      # Sleep so that we give other threads time on the processor
-      rospy.sleep(0.1)
-      seconds = rospy.get_time()
-
-    # If we exited the while loop without returning then we timed out
-    return False
-    ## END_SUB_TUTORIAL
-
 def reach(x, y, z, pace):
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     rospy.sleep(1)
@@ -444,42 +410,45 @@ def reach_v2(x, y, z, pace, rot_pace):
     dist_vector_theta = math.atan2(dist_vector[1],dist_vector[0])
 
     #RUOTO SUL POSTO
+    if dist_vec_module > 0.5 :
+        too_close = False
+        theta_to_rotate = -plat_theta + dist_vector_theta -pi/2
+        print "-----------------------------------"
+        print "    theta to rotate = " + str(round(theta_to_rotate*180/pi,1))
+        print "-----------------------------------"
+        if theta_to_rotate > pi :
+            theta_to_rotate = theta_to_rotate - pi
+        elif theta_to_rotate < -pi :
+            theta_to_rotate = theta_to_rotate + pi
+        if theta_to_rotate > pi/2 and theta_to_rotate < pi:
+            theta_to_rotate = pi - theta_to_rotate
+        elif theta_to_rotate < -pi/2 and theta_to_rotate > -pi:
+            theta_to_rotate = pi + theta_to_rotate
 
-    theta_to_rotate = -plat_theta + dist_vector_theta -pi/2
-    print "-----------------------------------"
-    print "    theta to rotate = " + str(round(theta_to_rotate*180/pi,1))
-    print "-----------------------------------"
-    if theta_to_rotate > pi :
-        theta_to_rotate = theta_to_rotate - pi
-    elif theta_to_rotate < -pi :
-        theta_to_rotate = theta_to_rotate + pi
-    if theta_to_rotate > pi/2 and theta_to_rotate < pi:
-        theta_to_rotate = pi - theta_to_rotate
-    elif theta_to_rotate < -pi/2 and theta_to_rotate > -pi:
-        theta_to_rotate = pi + theta_to_rotate
+        if theta_to_rotate < 0 :
+            theta_to_rotate = pi/2 + theta_to_rotate
+            vel.angular.z = rot_pace
+        else :
+            theta_to_rotate = -pi/2 + theta_to_rotate
+            vel.angular.z = -rot_pace
 
-    if theta_to_rotate < 0 :
-        theta_to_rotate = pi/2 + theta_to_rotate
-        vel.angular.z = rot_pace
-    else :
-        theta_to_rotate = -pi/2 + theta_to_rotate
-        vel.angular.z = -rot_pace
+        vel.linear.x = 0
+        vel.linear.y = 0
 
-    vel.linear.x = 0
-    vel.linear.y = 0
-
-    t = 0
-    tic = rospy.Time.now()
-    toc = rospy.Time.now() - tic
-    r = rospy.Rate(100)
-    while t < abs((theta_to_rotate)/rot_pace):
+        t = 0
+        tic = rospy.Time.now()
         toc = rospy.Time.now() - tic
-        t = (toc.secs * (10 ** 9) + toc.nsecs) / (10 ** 9 * 1.0000)
-        pub.publish(vel)
-        r.sleep()
+        r = rospy.Rate(100)
+        while t < abs((theta_to_rotate)/rot_pace):
+            toc = rospy.Time.now() - tic
+            t = (toc.secs * (10 ** 9) + toc.nsecs) / (10 ** 9 * 1.0000)
+            pub.publish(vel)
+            r.sleep()
 
-    vel.angular.z = 0
-    pub.publish(vel)
+        vel.angular.z = 0
+        pub.publish(vel)
+    else :
+        too_close = True
 
     # MI AVVICINO AL TARGET
     rospy.sleep(0.2)
@@ -497,7 +466,7 @@ def reach_v2(x, y, z, pace, rot_pace):
             platform_position.link_state.pose.orientation.w)
         euler = euler_from_quaternion(quaternion)
         plat_theta = euler[2]
-        if counter % 10 == 0 :
+        if counter % 50 == 0 :
             print "-----------------------------------"
             print "   x = " + str(round(plat_x,2))
             print "   y = " + str(round(plat_y,2))
@@ -507,7 +476,7 @@ def reach_v2(x, y, z, pace, rot_pace):
         dist_vec_module = math.sqrt(dist_vector[0] ** 2 + dist_vector[1] ** 2  )
         dist_vector[0] = dist_vector[0]/dist_vec_module
         dist_vector[1] = dist_vector[1]/dist_vec_module
-        if dist_vec_module > 0.47 :
+        if dist_vec_module > 0.5 :
             vel.linear.x = pace*(dist_vector[0]*math.cos(plat_theta) + dist_vector[1]*math.sin(plat_theta))
             vel.linear.y = pace*(-dist_vector[0]*math.sin(plat_theta) + dist_vector[1]*math.cos(plat_theta))
             pub.publish(vel)
@@ -524,29 +493,30 @@ def reach_v2(x, y, z, pace, rot_pace):
     diff_direction = (plat_theta - dist_vector_theta)*180/pi
     print "   diff =" + str(diff_direction)
     #RUOTO NUOVAMENTE
-    t = 0
-    vel.angular.z = rot_pace
-    tic = rospy.Time.now()
-    toc = rospy.Time.now() - tic
-    r = rospy.Rate(100)
-
-    while t < (pi/(2*rot_pace)):
+    if not too_close :
+        t = 0
+        vel.angular.z = rot_pace
+        tic = rospy.Time.now()
         toc = rospy.Time.now() - tic
-        t = (toc.secs * (10 ** 9) + toc.nsecs) / (10 ** 9 * 1.0000)
+        r = rospy.Rate(100)
+
+        while t < (pi/(2*rot_pace)):
+            toc = rospy.Time.now() - tic
+            t = (toc.secs * (10 ** 9) + toc.nsecs) / (10 ** 9 * 1.0000)
+            pub.publish(vel)
+            r.sleep()
+
+        vel.angular.z = 0
         pub.publish(vel)
-        r.sleep()
 
-    vel.angular.z = 0
-    pub.publish(vel)
-
-    platform_position = get_link_srv(platform)
-    quaternion = (
-        platform_position.link_state.pose.orientation.x,
-        platform_position.link_state.pose.orientation.y,
-        platform_position.link_state.pose.orientation.z,
-        platform_position.link_state.pose.orientation.w)
-    euler = euler_from_quaternion(quaternion)
-    plat_theta = euler[2]
+        platform_position = get_link_srv(platform)
+        quaternion = (
+            platform_position.link_state.pose.orientation.x,
+            platform_position.link_state.pose.orientation.y,
+            platform_position.link_state.pose.orientation.z,
+            platform_position.link_state.pose.orientation.w)
+        euler = euler_from_quaternion(quaternion)
+        plat_theta = euler[2]
 
 
 def main():
@@ -559,10 +529,9 @@ def main():
 
     move_ARM = MoveGroupPythonIntefaceTutorial()
 
-    pace = 0.2
+    pace = 0.3
     rot_pace = 0.55
     reach_v2(x, y, z, pace, rot_pace)
-    rospy.sleep(0.15)
     move_ARM.go_to_pose_goal()
     #
     #
