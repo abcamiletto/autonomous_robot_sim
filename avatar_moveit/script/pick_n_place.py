@@ -30,13 +30,12 @@ y = float(sys.argv[2])
 z=Z
 
 
-class MoveGroupPythonIntefaceTutorial(object):
-  """MoveGroupPythonIntefaceTutorial"""
+class MoveGroupPython(object):
+  """MoveGroupPython"""
   def __init__(self):
-    super(MoveGroupPythonIntefaceTutorial, self).__init__()
+    super(MoveGroupPython, self).__init__()
 
-    ## BEGIN_SUB_TUTORIAL setup
-    ##
+
     ## First initialize `moveit_commander`_ and a `rospy`_ node:
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('my_auto_control', anonymous=True)
@@ -65,10 +64,6 @@ class MoveGroupPythonIntefaceTutorial(object):
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
 
-    ## END_SUB_TUTORIAL
-
-    ## BEGIN_SUB_TUTORIAL basic_info
-    ##
     ## Getting Basic Information
     ## ^^^^^^^^^^^^^^^^^^^^^^^^^
     # We can get the name of the reference frame for this robot:
@@ -83,12 +78,6 @@ class MoveGroupPythonIntefaceTutorial(object):
     group_names = robot.get_group_names()
     print "============ Available Planning Groups:", robot.get_group_names()
 
-    # Sometimes for debugging it is useful to print the entire state of the
-    # robot:
-    # print "============ Printing robot state"
-    # print robot.get_current_state()
-    # print ""
-    ## END_SUB_TUTORIAL
 
     # Misc variables
     self.box_name = ''
@@ -107,8 +96,6 @@ class MoveGroupPythonIntefaceTutorial(object):
     # reason not to.
     move_group = self.move_group
 
-    ## BEGIN_SUB_TUTORIAL plan_to_joint_state
-    ##
     ## Planning to a Joint Goal
     ## ^^^^^^^^^^^^^^^^^^^^^^^^
     ## The Panda's zero configuration is at a `singularity <https://www.quora.com/Robotics-What-is-meant-by-kinematic-singularity>`_ so the first
@@ -130,7 +117,6 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Calling ``stop()`` ensures that there is no residual movement
     move_group.stop()
 
-    ## END_SUB_TUTORIAL
 
     # For testing:
     current_joints = move_group.get_current_joint_values()
@@ -144,8 +130,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # reason not to.
     move_group = self.move_group
 
-    ## BEGIN_SUB_TUTORIAL plan_to_pose
-    ##
+
     ## Planning to a Pose Goal
     ## ^^^^^^^^^^^^^^^^^^^^^^^
     ## We can plan a motion for this group to a desired pose for the
@@ -181,7 +166,6 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Note: there is no equivalent function for clear_joint_value_targets()
     move_group.clear_pose_targets()
 
-    ## END_SUB_TUTORIAL
 
     # For testing:
     # Note that since this section of code will not be included in the tutorials
@@ -231,7 +215,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Note: We are just planning, not asking move_group to actually move the robot yet:
     return plan, fraction
 
-    ## END_SUB_TUTORIAL
+
 
 
   def display_trajectory(self, plan):
@@ -241,8 +225,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     robot = self.robot
     display_trajectory_publisher = self.display_trajectory_publisher
 
-    ## BEGIN_SUB_TUTORIAL display_trajectory
-    ##
+
     ## Displaying a Trajectory
     ## ^^^^^^^^^^^^^^^^^^^^^^^
     ## You can ask RViz to visualize a plan (aka trajectory) for you. But the
@@ -258,7 +241,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Publish
     display_trajectory_publisher.publish(display_trajectory);
 
-    ## END_SUB_TUTORIAL
+
 
 
   def execute_plan(self, plan):
@@ -508,33 +491,13 @@ def main():
     print "               Welcome"
     print "----------------------------------------"
 
-    move_ARM = MoveGroupPythonIntefaceTutorial()
+    move_ARM = MoveGroupPython()
 
     pace = 0.3
     rot_pace = 0.55
     reach_v2(x, y, z, pace, rot_pace)
     move_ARM.go_to_pose_goal()
-    #
-    #
-    # # print "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
-    # # raw_input()
-    # # tutorial.display_trajectory(cartesian_plan)
-    # cartesian_plan, fraction = tutorial.plan_cartesian_path()
-    #
-    # tutorial.execute_plan(cartesian_plan)
-    #
-    #
-    #
-    # print "============ FINISHED!"
-    #
-    # vel = Twist ()
-    # vel.linear.x = 0.0
-    # vel.linear.y = 0.0
-    # vel.linear.z = 0.0
-    # vel.angular.x = 0.0
-    # vel.angular.y = 0.0
-    # vel.angular.z = 0.0
-    # pub.publish(vel)
+
   except rospy.ROSInterruptException:
     return
   except KeyboardInterrupt:
