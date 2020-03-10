@@ -28,27 +28,6 @@ z_add = 0.535
 x = float(sys.argv[1])
 y = float(sys.argv[2])
 z=Z
-def all_close(goal, actual, tolerance):
-  """
-  Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
-  @param: goal       A list of floats, a Pose or a PoseStamped
-  @param: actual     A list of floats, a Pose or a PoseStamped
-  @param: tolerance  A float
-  @returns: bool
-  """
-  all_equal = True
-  if type(goal) is list:
-    for index in range(len(goal)):
-      if abs(actual[index] - goal[index]) > tolerance:
-        return False
-
-  elif type(goal) is geometry_msgs.msg.PoseStamped:
-    return all_close(goal.pose, actual.pose, tolerance)
-
-  elif type(goal) is geometry_msgs.msg.Pose:
-    return all_close(pose_to_list(goal), pose_to_list(actual), tolerance)
-
-  return True
 
 
 class MoveGroupPythonIntefaceTutorial(object):
@@ -60,7 +39,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     ##
     ## First initialize `moveit_commander`_ and a `rospy`_ node:
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
+    rospy.init_node('my_auto_control', anonymous=True)
 
     ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
     ## kinematic model and the robot's current joint states
@@ -155,7 +134,7 @@ class MoveGroupPythonIntefaceTutorial(object):
 
     # For testing:
     current_joints = move_group.get_current_joint_values()
-    return all_close(joint_goal, current_joints, 0.01)
+    return 0
 
 
   def go_to_pose_goal(self):
@@ -208,7 +187,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Note that since this section of code will not be included in the tutorials
     # we use the class variable rather than the copied state variable
     current_pose = self.move_group.get_current_pose().pose
-    return all_close(pose_goal, current_pose, 0.01)
+    return 0
 
 
 
@@ -491,7 +470,9 @@ def reach_v2(x, y, z, pace, rot_pace):
         r.sleep()
 
     diff_direction = (plat_theta - dist_vector_theta)*180/pi
-    print "   diff =" + str(diff_direction)
+    print "-----------------------------------"
+    print "   direction - orientation = " + str(round(diff_direction,1)) +"\n"
+
     #RUOTO NUOVAMENTE
     if not too_close :
         t = 0
@@ -520,7 +501,7 @@ def reach_v2(x, y, z, pace, rot_pace):
 
 
 def main():
-  rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
+  rospy.init_node('my_auto_control', anonymous=True)
   try:
     print ""
     print "----------------------------------------"
