@@ -44,10 +44,10 @@ def all_close(goal, actual, tolerance):
 
   return True
 
-class MoveGroupPythonIntefaceTutorial(object):
-  """MoveGroupPythonIntefaceTutorial"""
+class MoveGroupPython(object):
+  """MoveGroupPython"""
   def __init__(self):
-    super(MoveGroupPythonIntefaceTutorial, self).__init__()
+    super(MoveGroupPython, self).__init__()
 
     ## BEGIN_SUB_TUTORIAL setup
     ##
@@ -116,8 +116,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # reason not to.
     move_group = self.move_group
 
-    ## BEGIN_SUB_TUTORIAL plan_to_pose
-    ##
+
     ## Planning to a Pose Goal
     ## ^^^^^^^^^^^^^^^^^^^^^^^
     ## We can plan a motion for this group to a desired pose for the
@@ -142,7 +141,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Note: there is no equivalent function for clear_joint_value_targets()
     move_group.clear_pose_targets()
 
-    ## END_SUB_TUTORIAL
+
 
     # For testing:
     # Note that since this section of code will not be included in the tutorials
@@ -156,8 +155,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # reason not to.
     move_group = self.move_group
 
-    ## BEGIN_SUB_TUTORIAL plan_cartesian_path
-    ##
+
     ## Cartesian Paths
     ## ^^^^^^^^^^^^^^^
     ## You can plan a Cartesian path directly by specifying a list of waypoints
@@ -190,7 +188,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     # Note: We are just planning, not asking move_group to actually move the robot yet:
     return plan, fraction
 
-    ## END_SUB_TUTORIAL
+
 
   def execute_plan(self, plan):
     # Copy class variables to local variables to make the web tutorials more clear.
@@ -210,15 +208,12 @@ def main():
   try:
     print ""
     print "----------------------------------------------------------"
-    print "Welcome to the MoveIt MoveGroup Python Interface Tutorial"
+    print "              Welcome to my MecRob Project"
     print "----------------------------------------------------------"
 
 
-    tutorial = MoveGroupPythonIntefaceTutorial()
+    tutorial = MoveGroupPython()
 
-    # print "============ Press `Enter` to execute a movement using a joint state goal ..."
-    #
-    # tutorial.go_to_joint_state()
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     vel = Twist ()
     rospy.sleep(1)
@@ -230,19 +225,11 @@ def main():
     vel.angular.z = 0.25
     pub.publish(vel)
 
-
-
     tutorial.go_to_pose_goal()
 
-
-    # print "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
-    # raw_input()
-    # tutorial.display_trajectory(cartesian_plan)
     cartesian_plan, fraction = tutorial.plan_cartesian_path()
 
     tutorial.execute_plan(cartesian_plan)
-
-
 
     print "============ FINISHED!"
 
