@@ -49,11 +49,10 @@ class MoveGroupPython(object):
   def __init__(self):
     super(MoveGroupPython, self).__init__()
 
-    ## BEGIN_SUB_TUTORIAL setup
-    ##
+
     ## First initialize `moveit_commander`_ and a `rospy`_ node:
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
+    rospy.init_node('move_group_python', anonymous=True)
 
     ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
     ## kinematic model and the robot's current joint states
@@ -98,7 +97,7 @@ class MoveGroupPython(object):
     # print "============ Printing robot state"
     # print robot.get_current_state()
     # print ""
-    ## END_SUB_TUTORIAL
+
 
     # Misc variables
     self.box_name = ''
@@ -111,7 +110,7 @@ class MoveGroupPython(object):
     self.group_names = group_names
 
   def go_to_pose_goal(self):
-    # Copy class variables to local variables to make the web tutorials more clear.
+    # Copy class variables to local variables to make the web move_ARMs more clear.
     # In practice, you should use the class variables directly unless you have a good
     # reason not to.
     move_group = self.move_group
@@ -196,7 +195,6 @@ class MoveGroupPython(object):
     # reason not to.
     move_group = self.move_group
 
-    ## BEGIN_SUB_TUTORIAL execute_plan
     ##
     ## Executing a Plan
     ## ^^^^^^^^^^^^^^^^
@@ -212,7 +210,7 @@ def main():
     print "----------------------------------------------------------"
 
 
-    tutorial = MoveGroupPython()
+    move_ARM = MoveGroupPython()
 
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     vel = Twist ()
@@ -225,11 +223,11 @@ def main():
     vel.angular.z = 0.25
     pub.publish(vel)
 
-    tutorial.go_to_pose_goal()
+    move_ARM.go_to_pose_goal()
 
-    cartesian_plan, fraction = tutorial.plan_cartesian_path()
+    cartesian_plan, fraction = move_ARM.plan_cartesian_path()
 
-    tutorial.execute_plan(cartesian_plan)
+    move_ARM.execute_plan(cartesian_plan)
 
     print "============ FINISHED!"
 
