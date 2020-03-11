@@ -2,10 +2,7 @@
 This is a Gazebo simulation of a mobile autonomous robot
 
 ## Install
-You need to install the libfranka library. You can find the instruction here: https://frankaemika.github.io/docs/installation_linux.html
-It may be better to build it from source, i got problem with the single command line you can find in the tutorial.
-
-After that, just clone this repository in a src folder and make sure the `franka_ros` submodule is correctly downloaded, and in the right franka_ros folder. If there is any error, you can download it from here: https://github.com/frankaemika/franka_ros
+Just clone this repository in a src folder and make sure the `franka_ros` submodule is correctly downloaded, and in the right franka_ros folder. If there is any error, you can download it from here: https://github.com/frankaemika/franka_ros
 
 ## Task 1: Pick and Place
 The first thing to do is to make sure we are in the right folder and we sourced the workspace so:
