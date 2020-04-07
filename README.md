@@ -1,6 +1,8 @@
 # Robot Mechanics Project
 This is a Gazebo simulation of a mobile autonomous robot
 
+![alt-text-1](images/gif1.gif "title-1") ![alt-text-2](images/gif2.gif "title-2")
+
 ## Install
 Just clone this repository in a src folder and make sure the `franka_ros` submodule is correctly downloaded, and in the right franka_ros folder. If there is any error, you can download it from here: https://github.com/frankaemika/franka_ros
 
