@@ -1,4 +1,4 @@
-# Robot Mechanics Project
+# Robot Mechanics Exam Project
 This is a Gazebo simulation of a mobile autonomous robot
 
 ![alt-text-1](images/gif1.gif "title-1") ![alt-text-2](images/gif2.gif "title-2")
